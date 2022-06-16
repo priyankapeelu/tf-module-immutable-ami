@@ -1,31 +1,15 @@
-resource "aws_security_group" "allow_app" {
-  name        = "roboshop-${var.COMPONENT}-${var.ENV}"
-  description = "roboshop-${var.COMPONENT}-${var.ENV}"
-  vpc_id      = data.terraform_remote_state.vpc.outputs.VPC_ID
-
-  ingress {
-    description = "APP PORT"
-    from_port   = var.APP_PORT
-    to_port     = var.APP_PORT
-    protocol    = "tcp"
-    cidr_blocks = [data.terraform_remote_state.vpc.outputs.VPC_CIDR]
-  }
+resource "aws_security_group" "allow_ssh" {
+  name        = "${var.COMPONENT}-ami"
+  description = "${var.COMPONENT}-ami"
 
   ingress {
     description = "SSH"
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = [data.terraform_remote_state.vpc.outputs.VPC_CIDR, var.WORKSTATION_IP]
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
-  ingress {
-    description = "PROMETHEUS"
-    from_port   = 9100
-    to_port     = 9100
-    protocol    = "tcp"
-    cidr_blocks = [data.terraform_remote_state.vpc.outputs.VPC_CIDR, var.PROMETHEUS_IP]
-  }
 
   egress {
     from_port        = 0
@@ -36,6 +20,6 @@ resource "aws_security_group" "allow_app" {
   }
 
   tags = {
-    Name = "roboshop-${var.COMPONENT}-${var.ENV}"
+    Name = "${var.COMPONENT}-ami"
   }
 }
